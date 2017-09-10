@@ -1,6 +1,6 @@
 ## A simple Quadtree
 
-The backbone to create a simple Quadtree/Octree. If the elements in the node surpass the number *maxAmtElements*, this node will be split and the elements  will be redistributed so that all reside in the deepest node possible.
+The backbone to create a simple Quadtree/Octree. If the elements in the node surpass the number *maxAmtElements*, this node will be split and the elements are redistributed, so that all elements only reside in the deepest nodes possible.
 
 **a tree can be initialized with:**
 >Quadtree *quadtreeTest = new Quadtree(BB_init, nullptr);
@@ -12,9 +12,14 @@ The backbone to create a simple Quadtree/Octree. If the elements in the node sur
 **draw the tree using OpenGL:**
 >quadtreeTest->traverse_and_draw(quadtreeTest);
 
+**count all the nodes of the tree**
+>int tree_size = quadtreeTest->count_nodes(quadtreeTest);
+
+**count all the elements(points) of the tree**
+>int tree_count_elements = quadtreeTest->count_elements(quadtreeTest);
+
 
 **More Informations:**
-[More Infos](http://www.phys.ik.cx/programming/cpp/quadtree/index.php)
-
-[Video - maxPts = 1](https://www.youtube.com/watch?v=eyOuED5dhuo)
-[Video - maxPts = 5](https://www.youtube.com/watch?v=9vMSsbjsHnQ)
+http://www.phys.ik.cx/programming/cpp/quadtree/index.php
+https://www.youtube.com/watch?v=eyOuED5dhuo
+https://www.youtube.com/watch?v=9vMSsbjsHnQ

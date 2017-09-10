@@ -20,9 +20,10 @@ Quadtree::Quadtree(BoundaryBox *BB_gen, Quadtree* parent)
 	this->parent   = parent;
 }
 
+
 void Quadtree::traverse_and_draw(Quadtree* t)
 {
-	float elevate = -10.0f;	// z-shift of the whole tree
+	float elevate = -10.0f;
 
 	glLineWidth(2.0f);
 	glColor4f(0.0f, 0.0f, 0.0f, 1.0f);	// black
@@ -61,6 +62,7 @@ void Quadtree::traverse_and_draw(Quadtree* t)
 		northWest->traverse_and_draw(northWest);
 	}
 
+
 	if (t->southEast != NULL)
 	{
 		float centerx = t->boundary->cx;
@@ -96,6 +98,7 @@ void Quadtree::traverse_and_draw(Quadtree* t)
 	}
 }
 
+// split the current node into four new (children)nodes
 void Quadtree::subdivide()
 {
 	// subdivide NW
@@ -115,6 +118,7 @@ void Quadtree::subdivide()
 	southWest = new Quadtree(BB_init_SW, this);
 }
 
+// insert one point into the tree. Split the tree and relocate the points ot the node if necessary
 bool Quadtree::insert(pt2d insertPt)
 {
 	// check if the point resides in this node
@@ -148,16 +152,58 @@ bool Quadtree::insert(pt2d insertPt)
 	}
 
 	if (northEast->insert(insertPt)) 
+	{
 		return true;
+	}
 	
 	if (northWest->insert(insertPt))
+	{
 		return true;
+	}
 	
 	if (southWest->insert(insertPt))
+	{
 		return true;
+	}
 
 	if (southEast->insert(insertPt))
+	{
 		return true;
+	}
 
 	return false;
+}
+
+// count the nodes of the tree
+int Quadtree::count_nodes(Quadtree* t)
+{
+	if (t->northEast != NULL)	// node has been split
+	{
+		int nodes_NE = northEast->count_nodes(northEast);
+		int nodes_SE = southEast->count_nodes(southEast);
+		int nodes_SW = southWest->count_nodes(southWest);
+		int nodes_NW = northWest->count_nodes(northWest);
+		return nodes_NE + nodes_SE + nodes_SW + nodes_NW;
+	}
+
+	return 1;
+}
+
+// count the elements residing in the tree
+int Quadtree::count_elements(Quadtree* t)
+{
+	int fetch_elements = 0;
+
+	if (t->northEast != NULL)	// node has been split - continue with the recursion
+	{
+		fetch_elements += northEast->count_elements(northEast);
+		fetch_elements += southEast->count_elements(southEast);
+		fetch_elements += southWest->count_elements(southWest);
+		fetch_elements += northWest->count_elements(northWest);
+	}
+	else	// deepest (child)node possible
+		if (t->children.size() > 0)	// there are elements in this node
+			fetch_elements += t->children.size();
+
+	return fetch_elements;
 }

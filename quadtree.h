@@ -1,5 +1,6 @@
-#ifndef __OCTREE_H_INCLUDED__
-#define __OCTREE_H_INCLUDED__
+// quadtree header
+#ifndef __QUADREE_H_INCLUDED__
+#define __QUADREE_H_INCLUDED__
 
 #include <vector>
 
@@ -40,14 +41,14 @@ class Quadtree
 		Quadtree* southWest;
 		Quadtree* southEast;
 
-		//dimensions of the Node
+		// dimensions of the Node
 		BoundaryBox *boundary;
 
 		// elements in this node
 		std::vector<pt2d> children;
 
 		// minimum amount of pts to split the node
-		unsigned int maxAmtElements = 2;
+		unsigned int maxAmtElements = 5;
 
 		// pointer to the parent node
 		Quadtree *parent;
@@ -64,5 +65,12 @@ class Quadtree
 
 		// draw the tree using OpenGL
 		void traverse_and_draw(Quadtree* t);
+
+		// count the nodes of the tree
+		int count_nodes(Quadtree* t);
+
+		// count the elements residing in the tree
+		int count_elements(Quadtree* t);
+
 };
 #endif
