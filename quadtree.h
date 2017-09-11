@@ -35,27 +35,36 @@ struct BoundaryBox
 class Quadtree
 {
 	private:
-		// Children
+		// Children nodes
 		Quadtree* northWest;
 		Quadtree* northEast;
 		Quadtree* southWest;
 		Quadtree* southEast;
 
-		// dimensions of the Node
+		// dimensions of the node
 		BoundaryBox *boundary;
 
 		// elements in this node
 		std::vector<pt2d> children;
 
 		// minimum amount of pts to split the node
-		unsigned int maxAmtElements = 5;
+		unsigned int maxAmtElements = 1;
+
+		// maximum depth of the children nodes
+		int maxDepth = 5;
+
+		// depth of the node (0...root node)
+		int nodeDepth;
+
+		// drawing routine (used by traverse_and_draw)
+		void colorPick(float elevate, Quadtree* t, float *depthColor, int depthColorLen);
 
 		// pointer to the parent node
 		Quadtree *parent;
 
 	public:
 		// constructor
-		Quadtree(BoundaryBox *BB_init, Quadtree* parent);
+		Quadtree(BoundaryBox *BB_init, Quadtree* parent, int _nodeDepth);
 
 		// insert a point into the tree
 		bool insert(pt2d insertPt);
@@ -64,7 +73,7 @@ class Quadtree
 		void subdivide();
 
 		// draw the tree using OpenGL
-		void traverse_and_draw(Quadtree* t);
+		void traverse_and_draw(Quadtree* t, float widthRootNode);
 
 		// count the nodes of the tree
 		int count_nodes(Quadtree* t);

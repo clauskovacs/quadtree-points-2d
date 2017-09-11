@@ -1,121 +1,108 @@
 // quadtree class & functions
 #include <math.h>
 #include <iostream>
-#include <typeinfo>
 
 #include <GL/glut.h>
 #include <GL/gl.h>
 
-#include "quadtree.h"
+#include "octree.h"
 
 // constructor
-Quadtree::Quadtree(BoundaryBox *BB_gen, Quadtree* parent)
+Quadtree::Quadtree(BoundaryBox *BB_gen, Quadtree* parent, int _nodeDepth)
 {
 	northWest = nullptr;
 	northEast = nullptr;
 	southWest = nullptr;
 	southEast = nullptr;
 
-	this->boundary = BB_gen;
-	this->parent   = parent;
+	this->boundary  = BB_gen;
+	this->parent    = parent;
+	this->nodeDepth = _nodeDepth;
 }
 
-
-void Quadtree::traverse_and_draw(Quadtree* t)
+// drawing routine (used by traverse_and_draw)
+void Quadtree::colorPick(float elevate, Quadtree* t, float *depthColor, int depthColorLen)
 {
+	if (t->nodeDepth*3+2 > depthColorLen)	// default color when the depth exceeds the available colors from the array
+		glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+	else	// pick a color according to the array
+		glColor4f(depthColor[t->nodeDepth*3], depthColor[t->nodeDepth*3+1], depthColor[t->nodeDepth*3+2], 1.0f);
+
+	float centerx = t->boundary->cx;
+	float centery = t->boundary->cy;
+	float dim = t->boundary->dim;
+
+	glBegin(GL_LINES);
+		glVertex3f(centerx-dim, centery, elevate);
+		glVertex3f(centerx+dim, centery, elevate);
+
+		glVertex3f(centerx, centery-dim, elevate);
+		glVertex3f(centerx, centery+dim, elevate);
+	glEnd();
+}
+
+void Quadtree::traverse_and_draw(Quadtree* t, float widthRootNode)
+{
+	// adjust the height (z-coordinate) of the quadtree
 	float elevate = -10.0f;
 
+	// pick the colors according to the depth
+	float depthColor [] = 
+	{
+	1.0f, 0.0f, 0.0f,		// depth 1 = red
+	0.0f, 0.392f, 0.0f,		// depth 2 = darkgreen
+	0.0f, 0.0f, 1.0f,		// depth 3 = blue
+	1.0f, 0.0f, 1.0f,		// depth 4 = purple
+	0.0f, 1.0f, 1.0f, 		// depth 5 = cyan
+	0.294f, 0.0f, 0.51f,	// depth 6 = indigo
+	0.863f, 0.078f, 0.235f,	// depth 6 = Crimson
+	};
+
 	glLineWidth(2.0f);
-	glColor4f(0.0f, 0.0f, 0.0f, 1.0f);	// black
 
 	if (t->northEast != NULL)
 	{
-		float centerx = t->boundary->cx;
-		float centery = t->boundary->cy;
-		float dim = t->boundary->dim;
-
-		glBegin(GL_LINES);
-			glVertex3f(centerx-dim, centery, elevate);
-			glVertex3f(centerx+dim, centery, elevate);
-
-			glVertex3f(centerx, centery-dim, elevate);
-			glVertex3f(centerx, centery+dim, elevate);
-		glEnd();
-
-		northEast->traverse_and_draw(northEast);
+		colorPick(elevate, t, depthColor, sizeof(depthColor)/sizeof(*depthColor));
+		northEast->traverse_and_draw(northEast, widthRootNode);
 	}
 
 	if (t->northWest != NULL)
 	{
-		float centerx = t->boundary->cx;
-		float centery = t->boundary->cy;
-		float dim = t->boundary->dim;
-
-		glBegin(GL_LINES);
-			glVertex3f(centerx-dim, centery, elevate);
-			glVertex3f(centerx+dim, centery, elevate);
-
-			glVertex3f(centerx, centery-dim, elevate);
-			glVertex3f(centerx, centery+dim, elevate);
-		glEnd();
-
-		northWest->traverse_and_draw(northWest);
+		colorPick(elevate, t, depthColor, sizeof(depthColor)/sizeof(*depthColor));
+		northWest->traverse_and_draw(northWest, widthRootNode);
 	}
-
 
 	if (t->southEast != NULL)
 	{
-		float centerx = t->boundary->cx;
-		float centery = t->boundary->cy;
-		float dim = t->boundary->dim;
-
-		glBegin(GL_LINES);
-			glVertex3f(centerx-dim, centery, elevate);
-			glVertex3f(centerx+dim, centery, elevate);
-
-			glVertex3f(centerx, centery-dim, elevate);
-			glVertex3f(centerx, centery+dim, elevate);
-		glEnd();
-
-		southEast->traverse_and_draw(southEast);
+		colorPick(elevate, t, depthColor, sizeof(depthColor)/sizeof(*depthColor));
+		southEast->traverse_and_draw(southEast, widthRootNode);
 	}
 
 	if (t->southWest != NULL)
 	{
-		float centerx = t->boundary->cx;
-		float centery = t->boundary->cy;
-		float dim = t->boundary->dim;
-
-		glBegin(GL_LINES);
-			glVertex3f(centerx-dim, centery, elevate);
-			glVertex3f(centerx+dim, centery, elevate);
-
-			glVertex3f(centerx, centery-dim, elevate);
-			glVertex3f(centerx, centery+dim, elevate);
-		glEnd();
-
-		southWest->traverse_and_draw(southWest);
+		colorPick(elevate, t, depthColor, sizeof(depthColor)/sizeof(*depthColor));
+		southWest->traverse_and_draw(southWest, widthRootNode);
 	}
 }
 
-// split the current node into four new (children)nodes
+// split the current node into four new (children)nodes (increment depth by one)
 void Quadtree::subdivide()
 {
 	// subdivide NW
 	BoundaryBox *BB_init_NW = new BoundaryBox(boundary->cx-boundary->dim*0.5, boundary->cy+boundary->dim*0.5, boundary->dim*0.5);
-	northWest = new Quadtree(BB_init_NW, this);
+	northWest = new Quadtree(BB_init_NW, this, this->nodeDepth+1);
 
 	// subdivide NE
 	BoundaryBox *BB_init_NE = new BoundaryBox(boundary->cx+boundary->dim*0.5, boundary->cy+boundary->dim*0.5, boundary->dim*0.5);
-	northEast = new Quadtree(BB_init_NE, this);
+	northEast = new Quadtree(BB_init_NE, this, this->nodeDepth+1);
 
 	// subdivide SE
 	BoundaryBox *BB_init_SE = new BoundaryBox(boundary->cx+boundary->dim*0.5, boundary->cy-boundary->dim*0.5, boundary->dim*0.5);
-	southEast = new Quadtree(BB_init_SE, this);
+	southEast = new Quadtree(BB_init_SE, this, this->nodeDepth+1);
 
 	// subdivide SW
 	BoundaryBox *BB_init_SW = new BoundaryBox(boundary->cx-boundary->dim*0.5, boundary->cy-boundary->dim*0.5, boundary->dim*0.5);
-	southWest = new Quadtree(BB_init_SW, this);
+	southWest = new Quadtree(BB_init_SW, this, this->nodeDepth+1);
 }
 
 // insert one point into the tree. Split the tree and relocate the points ot the node if necessary
