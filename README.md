@@ -19,7 +19,7 @@ The backbone to create a simple Quadtree/Octree. If the elements in the node sur
 >int tree_count_elements = quadtreeTest->count_elements(quadtreeTest);
 
 
-**More Informations:**
+**More Informations:** <br />
 http://www.phys.ik.cx/programming/cpp/quadtree/index.php <br />
 https://www.youtube.com/watch?v=eyOuED5dhuo <br />
 https://www.youtube.com/watch?v=9vMSsbjsHnQ

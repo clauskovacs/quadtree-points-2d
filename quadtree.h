@@ -51,7 +51,7 @@ class Quadtree
 		unsigned int maxAmtElements = 1;
 
 		// maximum depth of the children nodes
-		int maxDepth = 5;
+		int maxDepth = 6;
 
 		// depth of the node (0...root node)
 		int nodeDepth;
@@ -61,6 +61,13 @@ class Quadtree
 
 		// pointer to the parent node
 		Quadtree *parent;
+
+		// auxiliary function used by delete_element()
+		void concatenate_nodes(Quadtree *concat_this_node_maybe);
+
+		// fetch the node in which the given element resides
+		// auxiliary function used by delete_element()
+		Quadtree * fetch_node(pt2d seekPt);
 
 	public:
 		// constructor
@@ -81,5 +88,13 @@ class Quadtree
 		// count the elements residing in the tree
 		int count_elements(Quadtree* t);
 
+		// returns all points corresponding to the node in which this point resides.
+		std::vector<pt2d> fetch_points(pt2d seekPt);
+
+		// clear the tree
+		void clear(Quadtree* t);
+
+		// remove a single element of the tree
+		bool delete_element(pt2d deletePt);
 };
 #endif
