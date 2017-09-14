@@ -310,8 +310,6 @@ Quadtree * Quadtree::fetch_node(pt2d seekPt)
 // vlah
 void Quadtree::concatenate_nodes(Quadtree *concat_this_node_maybe)
 {
-	std::cout << "concatenate -> " << concat_this_node_maybe << " | " << this->parent << " | " << concat_this_node_maybe->parent << std::endl;
-
 	// root node reached.
 	if (concat_this_node_maybe->parent == NULL)
 		return;
@@ -323,14 +321,9 @@ void Quadtree::concatenate_nodes(Quadtree *concat_this_node_maybe)
 
 	unsigned int children_sum = children_NE + children_NW + children_SE + children_SW;
 
-	std::cout << " > C/INFO ==> " << children_sum << "||" << children_NE << "/" << children_NW << "/" << children_SE << "/" << children_SW << std::endl;
-
 	bool hasChildren = false;
 	if (concat_this_node_maybe->parent->northEast->northEast != NULL or concat_this_node_maybe->parent->northWest->northEast != NULL or concat_this_node_maybe->parent->southEast->northEast != NULL or concat_this_node_maybe->parent->southWest->northEast != NULL)
 		hasChildren = true;
-
-	std::cout << "hasChildren: " << hasChildren << std::endl;
-
 
 	// Concatenate because all four nodes (3 sibling nodes and the one where the point lies) are empty
 	if (children_sum == 0 and hasChildren == false)
@@ -342,10 +335,11 @@ void Quadtree::concatenate_nodes(Quadtree *concat_this_node_maybe)
 		concatenate_nodes(concat_this_node_maybe->parent);
 	}
 
-
 	// shuffle all elements into the parent node if possible
 	else if (children_sum <= maxAmtElements and hasChildren == false)
 	{
+		concat_this_node_maybe->parent->children.clear();
+
 		for (int i = 0; i < children_NE; i++)
 		{
 			float reshufflex = concat_this_node_maybe->parent->northEast->children[i].x;
@@ -383,34 +377,21 @@ void Quadtree::concatenate_nodes(Quadtree *concat_this_node_maybe)
 		}
 
 		clear(concat_this_node_maybe->parent);
-
 		concatenate_nodes(concat_this_node_maybe->parent);
-
-
 	}
 }
 
 // remove a single element of the tree
 bool Quadtree::delete_element(pt2d deletePt)
 {
-	std::cout << "\n> attemptint to delete PT -> (" << deletePt.x << ", " << deletePt.y << ")" << std::endl;
-
 	// try to locate the node where the point lies
 	Quadtree * nodePtReside = fetch_node(deletePt);
 
 	if (nodePtReside == NULL)
-	{
-		std::cout << "Error locating the node in which the point lies" << std::endl;
 		return false;
-	}
 	else
 	{
-		std::cout << "> residing Node found: " << nodePtReside << std::endl;
-
-		std::cout << "> amount of elements in this node: " << nodePtReside->children.size() << std::endl;
-
 		// delete the element from the children std::vector only if there is more than one element in this tree
-
 		int del_index;
 		bool foundItem = false;
 
@@ -424,22 +405,11 @@ bool Quadtree::delete_element(pt2d deletePt)
 		// remove the item
 		nodePtReside->children.erase(nodePtReside->children.begin()+del_index);
 
-		std::cout << "> foundItem: " << foundItem << "  |  " << "post size: " << nodePtReside->children.size() << std::endl;
-
 		// element was not found -> deletion failed
 		if (foundItem == false)
 			return false;
 
-		// try to concatenate the node
-		//if ((int)nodePtReside->children.size() == 0)
-		//{
-		//	std::cout << "> single element of this node deleted" << std::endl;
-			concatenate_nodes(nodePtReside);
-			return true;
-		//}
-		// after deletion, there is more than one element in the children vector (all fine).
-		//else
-		//	return true;
+		concatenate_nodes(nodePtReside);
 	}
-	return false;
+	return true;
 }
