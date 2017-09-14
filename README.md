@@ -10,7 +10,7 @@ The backbone to create a simple Quadtree/Octree. If the elements in the node sur
 >Quadtree *quadtreeTest = new Quadtree(BB_init, nullptr, 0);
 
 **push a single point into the tree:**
->pt2d *insertPt = new pt2d(0, 0);
+>pt2d *insertPt = new pt2d(0, 0); <br />
 >quadtreeTest->insert(*insertPt);
 
 **draw the tree using OpenGL:**
