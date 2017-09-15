@@ -185,13 +185,6 @@ int Quadtree::count_elements(Quadtree* t)
 {
 	int fetch_elements = 0;
 
-	/*
-	std::cout << "~~~~~> " << t->northEast << "/" << t->children.size() << std::endl;
-	std::cout << "~~~~~> " << t->southEast << "/" << t->children.size() << std::endl;
-	std::cout << "~~~~~> " << t->southWest << "/" << t->children.size() << std::endl;
-	std::cout << "~~~~~> " << t->northWest << "/" << t->children.size() << std::endl;
-	*/
-
 	if (t->northEast != NULL)	// node has been split - continue with the recursion
 	{
 		fetch_elements += northEast->count_elements(northEast);
@@ -244,6 +237,7 @@ std::vector<pt2d> Quadtree::fetch_points(pt2d seekPt)
 		return return_elements;
 	}
 
+	// std::vectors holding the elements of these nodes
 	std::vector <pt2d> NE_fetch = northEast->fetch_points(seekPt);
 	std::vector <pt2d> NW_fetch = northWest->fetch_points(seekPt);
 	std::vector <pt2d> SW_fetch = southWest->fetch_points(seekPt);
@@ -307,7 +301,7 @@ Quadtree * Quadtree::fetch_node(pt2d seekPt)
 	return ReturnNode;
 }
 
-// vlah
+// auxiliary function used by delete_element(). Used to collapse nodes and redistribute the elements in them
 void Quadtree::concatenate_nodes(Quadtree *concat_this_node_maybe)
 {
 	// root node reached.
