@@ -413,3 +413,44 @@ bool Quadtree::delete_element(pt2d deletePt)
 	}
 	return true;
 }
+
+bool Quadtree::relocate_element(pt2d ptOrigin, pt2d PtMoveTo)
+{
+	Quadtree * nodePtReside_Origin = fetch_node(ptOrigin);
+
+	// PtMoveTo lies outside of the node -> remove and reinsert this element
+	if (PtMoveTo.x > nodePtReside_Origin->boundary->cx+nodePtReside_Origin->boundary->dim or PtMoveTo.x < nodePtReside_Origin->boundary->cx-nodePtReside_Origin->boundary->dim or PtMoveTo.y > nodePtReside_Origin->boundary->cy+nodePtReside_Origin->boundary->dim or PtMoveTo.y < nodePtReside_Origin->boundary->cy-nodePtReside_Origin->boundary->dim)
+	{
+		// TODO - remove element, reinsert into the parent node not the root node
+		//std::cout << "REINSERT" << std::endl;
+		delete_element(ptOrigin);
+
+		// insertion of the element was successful
+		if (insert(PtMoveTo))
+			return true;
+		// element could not be fit into the root node, i.e., exited the root tree
+		else
+			return false;
+	}
+	//overwrite the point since it didn't move out of the node
+	else
+	{
+		//std::cout << "MOVING" << std::endl;
+		// find the position of ptOrigin and overwrite its coordinates with the ones of PtMoveTo
+		int foundIndex = -1;
+		for (int i = 0; i < (int)nodePtReside_Origin->children.size(); i++)
+		{
+			if (nodePtReside_Origin->children[i].x == ptOrigin.x and nodePtReside_Origin->children[i].y == ptOrigin.y)
+			{
+				foundIndex = i;
+				break;
+			}
+		}
+
+		// update the coordinates, i.e., move the element
+		nodePtReside_Origin->children[foundIndex].x = PtMoveTo.x;
+		nodePtReside_Origin->children[foundIndex].y = PtMoveTo.y;
+	}
+
+	return true;
+}

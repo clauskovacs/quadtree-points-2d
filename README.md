@@ -25,6 +25,9 @@ The backbone to create a simple Quadtree/Octree. If the elements in the node sur
 **remove (delete) a single element of the tree**
 >bool del_pt_query = quadtreeTest->delete_element(*deletePt1);
 
+**relocate a single element**
+>bool return_move_query = quadtreeTest->relocate_element(*PtOrigin, *movePtTo);
+
 **More Informations:** <br />
 http://www.phys.ik.cx/programming/cpp/quadtree/index.php <br />
 https://www.youtube.com/watch?v=eyOuED5dhuo <br />

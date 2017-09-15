@@ -48,7 +48,7 @@ class Quadtree
 		std::vector<pt2d> children;
 
 		// minimum amount of pts to split the node
-		unsigned int maxAmtElements = 1;
+		unsigned int maxAmtElements = 2;
 
 		// maximum depth of the children nodes
 		int maxDepth = 6;
@@ -96,5 +96,8 @@ class Quadtree
 
 		// remove a single element of the tree
 		bool delete_element(pt2d deletePt);
+
+		// relocate a single element of the tree
+		bool relocate_element(pt2d ptOrigin, pt2d PtMoveTo);
 };
 #endif
