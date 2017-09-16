@@ -288,8 +288,9 @@ Quadtree * Quadtree::fetch_node(pt2d seekPt)
 		{
 			for (int i = 0; i < (int)children.size(); i++)
 				if (seekPt.x == children[i].x and seekPt.y == children[i].y)
-					return ReturnNode = this;
-			return NULL;
+					ReturnNode = this;
+
+			return ReturnNode;
 		}
 
 		ReturnNode = northEast->fetch_node(seekPt);
@@ -407,6 +408,7 @@ bool Quadtree::delete_element(pt2d deletePt)
 	}
 	return true;
 }
+
 
 bool Quadtree::relocate_element(pt2d ptOrigin, pt2d PtMoveTo)
 {
