@@ -6,8 +6,9 @@ The backbone to create a simple Quadtree/Octree. If the elements in the node sur
 >float BB_centerx = 0.0f; <br />
 >float BB_centery = 0.0f; <br />
 >float BB_dim = pow(2, 5); <br />
->BoundaryBox *BB_init = new BoundaryBox(BB_centerx, BB_centery, BB_dim); <br />
->Quadtree *quadtreeTest = new Quadtree(BB_init, nullptr, 0);
+>std::unique_ptr<BoundaryBox> BB_init2(new BoundaryBox(BB_centerx, BB_centery, BB_dim)); <br />
+>Quadtree *quadtreeTest = new Quadtree(std::move(BB_init2), nullptr, 0);
+
 
 **push a single point into the tree:**
 >pt2d *insertPt = new pt2d(0, 0); <br />

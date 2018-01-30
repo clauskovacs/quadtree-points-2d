@@ -4,6 +4,9 @@
 
 #include <vector>
 
+#include <memory>   // std::shared_ptr
+#include <utility>  // std::unique_ptr
+
 struct pt2d
 {
 	float x = 0.0;
@@ -19,7 +22,7 @@ struct pt2d
 
 struct BoundaryBox
 {
-	float cx;	// center of the node (y-coordinate)
+	float cx;	// center of the node (x-coordinate)
 	float cy;	// center of the node (y-coordinate)
 	float dim;	// width of the node
 
@@ -36,22 +39,22 @@ class Quadtree
 {
 	private:
 		// Children nodes
-		Quadtree* northWest;
-		Quadtree* northEast;
-		Quadtree* southWest;
-		Quadtree* southEast;
+		Quadtree *northWest;
+		Quadtree *northEast;
+		Quadtree *southWest;
+		Quadtree *southEast;
 
 		// dimensions of the node
-		BoundaryBox *boundary;
+        std::shared_ptr<BoundaryBox> boundary2;
 
 		// elements in this node
 		std::vector<pt2d> children;
 
 		// minimum amount of pts to split the node
-		unsigned int maxAmtElements = 2;
+		unsigned int maxAmtElements = 1;
 
 		// maximum depth of the children nodes
-		int maxDepth = 6;
+		int maxDepth = 5;
 
 		// depth of the node (0...root node)
 		int nodeDepth;
@@ -60,18 +63,31 @@ class Quadtree
 		void colorPick(float elevate, Quadtree* t, float *depthColor, int depthColorLen);
 
 		// pointer to the parent node
-		Quadtree *parent;
+		Quadtree* parent;
 
 		// auxiliary function used by delete_element()
 		void concatenate_nodes(Quadtree *concat_this_node_maybe);
 
 		// fetch the node in which the given element resides
 		// auxiliary function used by delete_element()
-		Quadtree * fetch_node(pt2d seekPt);
+		Quadtree* fetch_node(pt2d seekPt);
+
+        void removeChildren();
+
+        void clearNode();
+
+		// clear the tree
+		void clear(Quadtree *t);
+
 
 	public:
 		// constructor
-		Quadtree(BoundaryBox *BB_init, Quadtree* parent, int _nodeDepth);
+		Quadtree(std::shared_ptr<BoundaryBox> BB_init, Quadtree *parent, int _nodeDepth);
+
+        Quadtree *rootNode;
+
+		// destructor
+		~Quadtree();
 
 		// insert a point into the tree
 		bool insert(pt2d insertPt);
@@ -83,16 +99,13 @@ class Quadtree
 		void traverse_and_draw(Quadtree* t, float widthRootNode);
 
 		// count the nodes of the tree
-		int count_nodes(Quadtree* t);
+		int count_nodes(Quadtree *t);
 
 		// count the elements residing in the tree
-		int count_elements(Quadtree* t);
+		int count_elements(Quadtree *t);
 
-		// returns all points corresponding to the node in which this point resides.
+		// returns all points corresponding to the node in which this point resides
 		std::vector<pt2d> fetch_points(pt2d seekPt);
-
-		// clear the tree
-		void clear(Quadtree* t);
 
 		// remove a single element of the tree
 		bool delete_element(pt2d deletePt);
