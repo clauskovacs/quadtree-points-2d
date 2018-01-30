@@ -15,16 +15,16 @@ Quadtree::Quadtree(std::shared_ptr<BoundaryBox> BB_init, Quadtree *parent, int _
 	southWest = nullptr;
 	southEast = nullptr;
 
-    this->boundary2 = std::move(BB_init); 
+	this->boundary2 = std::move(BB_init); 
 
-    if (parent == nullptr)
-    {
-        this->parent = this;
-    }
-    else
-    {
-        this->parent = parent;
-    }
+	if (parent == nullptr)
+	{
+		this->parent = this;
+	}
+	else
+	{
+		this->parent = parent;
+	}
 
 	this->nodeDepth = _nodeDepth;
 }
@@ -133,20 +133,20 @@ void Quadtree::subdivide()
 	if (this->nodeDepth < maxDepth)	// split the node only if the maximum depth has not been reached yet
 	{
 		// subdivide NW
-        std::shared_ptr<BoundaryBox> BB_init_NW(new BoundaryBox(boundary2->cx-boundary2->dim*0.5, boundary2->cy+boundary2->dim*0.5, boundary2->dim*0.5));
+		std::shared_ptr<BoundaryBox> BB_init_NW(new BoundaryBox(boundary2->cx-boundary2->dim*0.5, boundary2->cy+boundary2->dim*0.5, boundary2->dim*0.5));
 		northWest = new Quadtree(std::move(BB_init_NW), this, this->nodeDepth+1);
 
 		// subdivide NE
-        std::shared_ptr<BoundaryBox> BB_init_NE(new BoundaryBox(boundary2->cx+boundary2->dim*0.5, boundary2->cy+boundary2->dim*0.5, boundary2->dim*0.5));
-        northEast = new Quadtree(std::move(BB_init_NE), this, this->nodeDepth+1);
+		std::shared_ptr<BoundaryBox> BB_init_NE(new BoundaryBox(boundary2->cx+boundary2->dim*0.5, boundary2->cy+boundary2->dim*0.5, boundary2->dim*0.5));
+		northEast = new Quadtree(std::move(BB_init_NE), this, this->nodeDepth+1);
 
-        // subdivide SE
-        std::shared_ptr<BoundaryBox> BB_init_SE(new BoundaryBox(boundary2->cx+boundary2->dim*0.5, boundary2->cy-boundary2->dim*0.5, boundary2->dim*0.5));
-        southEast = new Quadtree(std::move(BB_init_SE), this, this->nodeDepth+1);
+		// subdivide SE
+		std::shared_ptr<BoundaryBox> BB_init_SE(new BoundaryBox(boundary2->cx+boundary2->dim*0.5, boundary2->cy-boundary2->dim*0.5, boundary2->dim*0.5));
+		southEast = new Quadtree(std::move(BB_init_SE), this, this->nodeDepth+1);
 
 		// subdivide SW
-        std::shared_ptr<BoundaryBox> BB_init_SW(new BoundaryBox(boundary2->cx-boundary2->dim*0.5, boundary2->cy-boundary2->dim*0.5, boundary2->dim*0.5));
-        southWest = new Quadtree(std::move(BB_init_SW), this, this->nodeDepth+1);
+		std::shared_ptr<BoundaryBox> BB_init_SW(new BoundaryBox(boundary2->cx-boundary2->dim*0.5, boundary2->cy-boundary2->dim*0.5, boundary2->dim*0.5));
+		southWest = new Quadtree(std::move(BB_init_SW), this, this->nodeDepth+1);
 	}
 }
 
@@ -154,35 +154,34 @@ void Quadtree::subdivide()
 // drawing routine (used by traverse_and_draw). Used by traverse_and_draw()
 void Quadtree::colorPick(float elevate, Quadtree *t, float *depthColor, int depthColorLen)
 {
-    if(t->boundary2)
-    {
-        if (t->nodeDepth*3+2 > depthColorLen)	// default color when the depth exceeds the available colors from the array
-        {
-            glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-        }
-        else	// pick a color according to the array
-        {
-            glColor4f(depthColor[t->nodeDepth*3], depthColor[t->nodeDepth*3+1], depthColor[t->nodeDepth*3+2], 1.0f);
-        }
+	if(t->boundary2)
+	{
+		if (t->nodeDepth*3+2 > depthColorLen)	// default color when the depth exceeds the available colors from the array
+		{
+			glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+		}
+		else	// pick a color according to the array
+		{
+			glColor4f(depthColor[t->nodeDepth*3], depthColor[t->nodeDepth*3+1], depthColor[t->nodeDepth*3+2], 1.0f);
+		}
 
-        float centerx = t->boundary2->cx;
-        float centery = t->boundary2->cy;
-        float dim = t->boundary2->dim;
+		float centerx = t->boundary2->cx;
+		float centery = t->boundary2->cy;
+		float dim = t->boundary2->dim;
 
-        glBegin(GL_LINES);
-            glVertex3f(centerx-dim, centery, elevate);
-            glVertex3f(centerx+dim, centery, elevate);
+		glBegin(GL_LINES);
+			glVertex3f(centerx-dim, centery, elevate);
+			glVertex3f(centerx+dim, centery, elevate);
 
-            glVertex3f(centerx, centery-dim, elevate);
-            glVertex3f(centerx, centery+dim, elevate);
-        glEnd();
-    }
+			glVertex3f(centerx, centery-dim, elevate);
+			glVertex3f(centerx, centery+dim, elevate);
+		glEnd();
+	}
 }
-
 
 void Quadtree::traverse_and_draw(Quadtree *t, float widthRootNode)
 {
-    // adjust the height (z-coordinate) of the quadtree
+	// adjust the height (z-coordinate) of the quadtree
 	float elevate = -10.0;
 
 	// pick the colors according to the depth
@@ -222,8 +221,6 @@ void Quadtree::traverse_and_draw(Quadtree *t, float widthRootNode)
 		colorPick(elevate, t, depthColor, sizeof(depthColor)/sizeof(*depthColor));
 		t->southWest->traverse_and_draw(southWest, widthRootNode);
 	}
-
-
 }
 
 
@@ -259,12 +256,12 @@ int Quadtree::count_elements(Quadtree *t)
 	}
 	// deepest (child)node possible
 	else
-    {
+	{
 		if (t->children.size() > 0)	// there are elements in this node
-        {
+		{
 			fetch_elements += t->children.size();
-        }
-    }
+		}
+	}
 
 	return fetch_elements;
 }
@@ -278,7 +275,7 @@ Quadtree *Quadtree::fetch_node(pt2d seekPt)
 	// point outside of node
 	if (seekPt.x > boundary2->cx+boundary2->dim or seekPt.x <= boundary2->cx-boundary2->dim or seekPt.y > boundary2->cy+boundary2->dim or seekPt.y <= boundary2->cy-boundary2->dim)
 	{
-    }
+	}
 	// else -> point is inside of the node
 	else
 	{
@@ -286,33 +283,33 @@ Quadtree *Quadtree::fetch_node(pt2d seekPt)
 		if (northWest == nullptr)
 		{
 			bool foundNode = false;
-            ReturnNode = nullptr;
+			ReturnNode = nullptr;
 
 			for (int i = 0; i < (int)children.size(); i++)
-            {
+			{
 				if (seekPt.x == children[i].x and seekPt.y == children[i].y)
-                {
-                    foundNode = true;
-                }
-            }
+				{
+					foundNode = true;
+				}
+			}
 
-            if (foundNode == true)
-            {
-                ReturnNode = this;
-            }
+			if (foundNode == true)
+			{
+				ReturnNode = this;
+			}
 
-            return ReturnNode;
+			return ReturnNode;
 		}
 		else
-        {
-            ReturnNode = northEast->fetch_node(seekPt);
-            ReturnNode = northWest->fetch_node(seekPt);
-            ReturnNode = southWest->fetch_node(seekPt);
-            ReturnNode = southEast->fetch_node(seekPt);
-        }
+		{
+			ReturnNode = northEast->fetch_node(seekPt);
+			ReturnNode = northWest->fetch_node(seekPt);
+			ReturnNode = southWest->fetch_node(seekPt);
+			ReturnNode = southEast->fetch_node(seekPt);
+		}
 	}
 
-    return ReturnNode;
+	return ReturnNode;
 }
 
 
@@ -321,14 +318,14 @@ std::vector<pt2d> Quadtree::fetch_points(pt2d seekPt)
 {
 	std::vector <pt2d> return_elements;
 
-    // search the node in which the point seekPt resides
-    Quadtree *search_node = fetch_node(seekPt);
+	// search the node in which the point seekPt resides
+	Quadtree *search_node = fetch_node(seekPt);
 
-    // retrieve all the pts from the node
-    for (int i = 0; i < (int)search_node->children.size() ; i++)
-    {
-        return_elements.push_back(search_node->children[i]);
-    }
+	// retrieve all the pts from the node
+	for (int i = 0; i < (int)search_node->children.size() ; i++)
+	{
+		return_elements.push_back(search_node->children[i]);
+	}
 
 	return return_elements;
 }
@@ -341,33 +338,33 @@ bool Quadtree::delete_element(pt2d deletePt)
 	Quadtree *nodePtReside = fetch_node(deletePt);
 
 	if (nodePtReside == nullptr)   // this element is not in the QT
-    {
+	{
 		return false;
-    }
+	}
 	else
 	{
-        // retrieve location of deletePt in the children std::vector
+		// retrieve location of deletePt in the children std::vector
 		int del_index = -1;
 		bool foundItem = false;
 
-        for (del_index = 0; del_index < (int)nodePtReside->children.size(); del_index++)
-        {
+		for (del_index = 0; del_index < (int)nodePtReside->children.size(); del_index++)
+		{
 			if (deletePt.x == nodePtReside->children[del_index].x and deletePt.y == nodePtReside->children[del_index].y)
 			{
 				foundItem = true;
-                nodePtReside->children.erase(nodePtReside->children.begin()+del_index);
+				nodePtReside->children.erase(nodePtReside->children.begin()+del_index);
 				break;
 			}
-        }
+		}
 
-        // element was not found -> deletion failed
-        if (foundItem == false)
-        {
-            return false;
-        }
+		// element was not found -> deletion failed
+		if (foundItem == false)
+		{
+			return false;
+		}
 
-            concatenate_nodes(nodePtReside);
-        }
+			concatenate_nodes(nodePtReside);
+		}
 
 	return true;
 }
@@ -376,96 +373,96 @@ bool Quadtree::delete_element(pt2d deletePt)
 // auxiliary function used by delete_element(). Used to collapse nodes and redistribute elements after collapsing
 void Quadtree::concatenate_nodes(Quadtree *concat_this_node_maybe)
 {
-    if (concat_this_node_maybe->parent == concat_this_node_maybe)   // point resides in parent -> do nothing
-    {
-    }
-    else
-    {
-        // Concatenate because all four nodes (3 sibling nodes and the one where the point lies) are empty
-        if (concat_this_node_maybe->parent->northEast->northEast == nullptr && concat_this_node_maybe->parent->northWest->northEast == nullptr && concat_this_node_maybe->parent->southEast->northEast == nullptr && concat_this_node_maybe->parent->southWest->northEast == nullptr)
-        {
-            int amtElemntsNE = concat_this_node_maybe->parent->northEast->children.size();
-            int amtElemntsNW = concat_this_node_maybe->parent->northWest->children.size();
-            int amtElemntsSE = concat_this_node_maybe->parent->southEast->children.size();
-            int amtElemntsSW = concat_this_node_maybe->parent->southWest->children.size();
+	if (concat_this_node_maybe->parent == concat_this_node_maybe)   // point resides in parent -> do nothing
+	{
+	}
+	else
+	{
+		// Concatenate because all four nodes (3 sibling nodes and the one where the point lies) are empty
+		if (concat_this_node_maybe->parent->northEast->northEast == nullptr && concat_this_node_maybe->parent->northWest->northEast == nullptr && concat_this_node_maybe->parent->southEast->northEast == nullptr && concat_this_node_maybe->parent->southWest->northEast == nullptr)
+		{
+			int amtElemntsNE = concat_this_node_maybe->parent->northEast->children.size();
+			int amtElemntsNW = concat_this_node_maybe->parent->northWest->children.size();
+			int amtElemntsSE = concat_this_node_maybe->parent->southEast->children.size();
+			int amtElemntsSW = concat_this_node_maybe->parent->southWest->children.size();
 
-            unsigned int sumElements = amtElemntsNE + amtElemntsNW + amtElemntsSE + amtElemntsSW;
+			unsigned int sumElements = amtElemntsNE + amtElemntsNW + amtElemntsSE + amtElemntsSW;
 
-            // move all elements from the leaf nodes into their parents node and delete the leaf nodes
-            if (sumElements <= maxAmtElements)
-            {
-                // move elements from the northEast node to the parent node
-                for (int i = 0; i < amtElemntsNE; i++)
-                {
-                    float reshufflex = concat_this_node_maybe->parent->northEast->children[i].x;
-                    float reshuffley = concat_this_node_maybe->parent->northEast->children[i].y;
+			// move all elements from the leaf nodes into their parents node and delete the leaf nodes
+			if (sumElements <= maxAmtElements)
+			{
+				// move elements from the northEast node to the parent node
+				for (int i = 0; i < amtElemntsNE; i++)
+				{
+					float reshufflex = concat_this_node_maybe->parent->northEast->children[i].x;
+					float reshuffley = concat_this_node_maybe->parent->northEast->children[i].y;
 
-                    pt2d reinsertPt(reshufflex, reshuffley);
-                    concat_this_node_maybe->parent->children.push_back(reinsertPt);
-                }
+					pt2d reinsertPt(reshufflex, reshuffley);
+					concat_this_node_maybe->parent->children.push_back(reinsertPt);
+				}
 
-                // move elements from the northWest node to the parent node
-                for (int i = 0; i < amtElemntsNW; i++)
-                {
-                    float reshufflex = concat_this_node_maybe->parent->northWest->children[i].x;
-                    float reshuffley = concat_this_node_maybe->parent->northWest->children[i].y;
+				// move elements from the northWest node to the parent node
+				for (int i = 0; i < amtElemntsNW; i++)
+				{
+					float reshufflex = concat_this_node_maybe->parent->northWest->children[i].x;
+					float reshuffley = concat_this_node_maybe->parent->northWest->children[i].y;
 
-                    pt2d reinsertPt(reshufflex, reshuffley);
-                    concat_this_node_maybe->parent->children.push_back(reinsertPt);
-                }
+					pt2d reinsertPt(reshufflex, reshuffley);
+					concat_this_node_maybe->parent->children.push_back(reinsertPt);
+				}
 
-                // move elements from the southEast node to the parent node
-                for (int i = 0; i < amtElemntsSE; i++)
-                {
-                    float reshufflex = concat_this_node_maybe->parent->southEast->children[i].x;
-                    float reshuffley = concat_this_node_maybe->parent->southEast->children[i].y;
+				// move elements from the southEast node to the parent node
+				for (int i = 0; i < amtElemntsSE; i++)
+				{
+					float reshufflex = concat_this_node_maybe->parent->southEast->children[i].x;
+					float reshuffley = concat_this_node_maybe->parent->southEast->children[i].y;
 
-                    pt2d reinsertPt(reshufflex, reshuffley);
-                    concat_this_node_maybe->parent->children.push_back(reinsertPt);
-                }
+					pt2d reinsertPt(reshufflex, reshuffley);
+					concat_this_node_maybe->parent->children.push_back(reinsertPt);
+				}
 
-                // move elements from the southWest node to the parent node
-                for (int i = 0; i < amtElemntsSW; i++)
-                {
-                    float reshufflex = concat_this_node_maybe->parent->southWest->children[i].x;
-                    float reshuffley = concat_this_node_maybe->parent->southWest->children[i].y;
+				// move elements from the southWest node to the parent node
+				for (int i = 0; i < amtElemntsSW; i++)
+				{
+					float reshufflex = concat_this_node_maybe->parent->southWest->children[i].x;
+					float reshuffley = concat_this_node_maybe->parent->southWest->children[i].y;
 
-                    pt2d reinsertPt(reshufflex, reshuffley);
-                    concat_this_node_maybe->parent->children.push_back(reinsertPt);
-                }
+					pt2d reinsertPt(reshufflex, reshuffley);
+					concat_this_node_maybe->parent->children.push_back(reinsertPt);
+				}
 
-                // generate a pointer to the next node to concatinate (prevents an invalid read)
-                Quadtree *concat_next = concat_this_node_maybe->parent;
+				// generate a pointer to the next node to concatinate (prevents an invalid read)
+				Quadtree *concat_next = concat_this_node_maybe->parent;
 
-                // delete the sibling nodes (of the removed point)
-                concat_this_node_maybe->parent->clearNode();
+				// delete the sibling nodes (of the removed point)
+				concat_this_node_maybe->parent->clearNode();
 
-                // proceed with the recursion
-                concatenate_nodes(concat_next);
-            }
-        }
-    }
+				// proceed with the recursion
+				concatenate_nodes(concat_next);
+			}
+		}
+	}
 }
 
 
 bool Quadtree::relocate_element(pt2d ptOrigin, pt2d PtMoveTo)
 {
-    if (ptOrigin.x == PtMoveTo.x and ptOrigin.y == PtMoveTo.y)
-    {
-        return false;
-    }
+	if (ptOrigin.x == PtMoveTo.x and ptOrigin.y == PtMoveTo.y)
+	{
+		return false;
+	}
 
 	Quadtree *nodePtReside_Origin = fetch_node(ptOrigin);
 
-    // PtMoveTo lies outside of the node -> remove and reinsert this element
+	// PtMoveTo lies outside of the node -> remove and reinsert this element
 	if (PtMoveTo.x > nodePtReside_Origin->boundary2->cx+nodePtReside_Origin->boundary2->dim or PtMoveTo.x <= nodePtReside_Origin->boundary2->cx-nodePtReside_Origin->boundary2->dim or PtMoveTo.y > nodePtReside_Origin->boundary2->cy+nodePtReside_Origin->boundary2->dim or PtMoveTo.y <= nodePtReside_Origin->boundary2->cy-nodePtReside_Origin->boundary2->dim)
 	{
 		// TODO - remove element, reinsert into the parent node not the root node
 		delete_element(ptOrigin);
 
-        bool check_insert = insert(PtMoveTo);
+		bool check_insert = insert(PtMoveTo);
 
-        if (check_insert)
+		if (check_insert)
 		{
 			return true;
 		}
@@ -476,7 +473,7 @@ bool Quadtree::relocate_element(pt2d ptOrigin, pt2d PtMoveTo)
 		}
 
 	}
-	//overwrite the point since it didn't move out of the node
+	//overwrite the point since it did not move out of the node
 	else
 	{
 		// find the position of ptOrigin and overwrite its coordinates with the ones of PtMoveTo

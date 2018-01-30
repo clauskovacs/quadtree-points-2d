@@ -45,7 +45,7 @@ class Quadtree
 		Quadtree *southEast;
 
 		// dimensions of the node
-        std::shared_ptr<BoundaryBox> boundary2;
+		std::shared_ptr<BoundaryBox> boundary2;
 
 		// elements in this node
 		std::vector<pt2d> children;
@@ -54,7 +54,7 @@ class Quadtree
 		unsigned int maxAmtElements = 1;
 
 		// maximum depth of the children nodes
-		int maxDepth = 5;
+		int maxDepth = 6;
 
 		// depth of the node (0...root node)
 		int nodeDepth;
@@ -72,19 +72,16 @@ class Quadtree
 		// auxiliary function used by delete_element()
 		Quadtree* fetch_node(pt2d seekPt);
 
-        void removeChildren();
+		void removeChildren();
 
-        void clearNode();
+		void clearNode();
 
 		// clear the tree
 		void clear(Quadtree *t);
 
-
 	public:
 		// constructor
 		Quadtree(std::shared_ptr<BoundaryBox> BB_init, Quadtree *parent, int _nodeDepth);
-
-        Quadtree *rootNode;
 
 		// destructor
 		~Quadtree();
@@ -104,7 +101,7 @@ class Quadtree
 		// count the elements residing in the tree
 		int count_elements(Quadtree *t);
 
-		// returns all points corresponding to the node in which this point resides
+		// returns all points corresponding to the node in which this point (seekPt) resides
 		std::vector<pt2d> fetch_points(pt2d seekPt);
 
 		// remove a single element of the tree
